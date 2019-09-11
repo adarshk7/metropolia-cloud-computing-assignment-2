@@ -51,8 +51,8 @@
         return
       }
       // For "production" use:
-      // xhr.open('GET', `http://35.226.73.0/diceapi/dice/${faceCount}`);
-      xhr.open('GET', `http://localhost:8080/diceapi/dice/${faceCount}`);
+      xhr.open('GET', `http://35.226.73.0/diceapi/dice/${faceCount}`);
+      // xhr.open('GET', `http://localhost:8080/diceapi/dice/${faceCount}`);
       xhr.send();
       xhr.onload = function() {
         let result = JSON.parse(xhr.response).Eyes;

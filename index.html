@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>The dice thrower!</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style type="text/css">
+    button {
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col s12">
+        <h1>The Dice Thrower!</h1>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="input-field col s12">
+        <input id="faceCount" type="number" name="faceCount" class="validate">
+        <label for="faceCount">Number of faces on the dice</label>
+      </div>
+    </div> 
+
+    <div class="row">
+      <button class="btn waves-effect waves-light" onclick='handleThrow()'>
+        Submit<i class="material-icons right">casino</i>
+      </button>
+    </div>
+
+    <div class="row">
+      <div class="col s3">
+        <div class="card-panel teal">
+          <span id="throwResult"class="white-text"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script language="javascript">
+    function handleThrow() {
+      let xhr = new XMLHttpRequest();
+      let faceCount = document.getElementById('faceCount').value;
+
+      if (!faceCount) {
+        document.getElementById('throwResult').innerHTML = "Please enter some number.";
+        return
+      }
+      // For "production" use:
+      // xhr.open('GET', `http://35.226.73.0/diceapi/dice/${faceCount}`);
+      xhr.open('GET', `http://localhost:8080/diceapi/dice/${faceCount}`);
+      xhr.send();
+      xhr.onload = function() {
+        let result = JSON.parse(xhr.response).Eyes;
+        document.getElementById('throwResult').innerHTML = `Throw result: ${result}`;
+      }
+    }
+  </script>
+</body>
+</html>

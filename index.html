@@ -4,7 +4,49 @@
   <title>The dice thrower!</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/node-uuid/1.4.8/uuid.min.js"></script>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script language="javascript">
+    function handleThrow() {
+      let xhr = new XMLHttpRequest();
+      let faceCount = document.getElementById('faceCount').value;
+
+      if (!faceCount) {
+        document.getElementById('throwResult').innerHTML = "Please enter some number.";
+        return
+      }
+      const urlParams = new URLSearchParams(window.location.search);
+      let access_token = urlParams.get('access_token');
+      let requestParams = access_token === null ? '': `?access_token=${access_token}`;
+
+      // For "production" use:
+      // xhr.open('GET', `http://35.226.73.0/diceapi/dice/${faceCount}`);
+      xhr.open('GET', `http://localhost:8080/diceapi/dice/${faceCount}${requestParams}`);
+      xhr.send();
+      xhr.onload = function() {
+        let throwResponse = JSON.parse(xhr.response);
+        let result = throwResponse.Eyes;
+        let user = throwResponse.User;
+        document.getElementById('throwResult').innerHTML = `Throw result: ${result} thrown by ${user}`;
+      }
+    }
+
+    function handleAuthorize() {
+      let xhr = new XMLHttpRequest();
+      xhr.open('GET', `http://localhost:8080/diceapi/authorization/get_code`);
+      xhr.send();
+      console.log('suhgurhgu');
+      xhr.onload = function() {
+        let redirectUrl = JSON.parse(xhr.response).AuthorizeUrl;
+        window.location.replace(redirectUrl);
+      }
+      // window.location.replace(`https://github.com/login/oauth/authorize?client_id=389c7c338eee357c434e&state=${uuid()}`)
+    }
+
+    function handleDeauthorize() {
+
+    }
+  </script>
   <style type="text/css">
     button {
       margin-left: 10px;
@@ -39,26 +81,18 @@
         </div>
       </div>
     </div>
+
+    <div class="row">
+      <button class="btn waves-effect waves-light" onclick='handleAuthorize()'>
+        Authorize<i class="material-icons right">lock_open</i>
+      </button>
+    </div>
+
+    <div class="row">
+      <button class="btn waves-effect waves-light" onclick='handleDeauthorize()'>
+        De-authorize<i class="material-icons right">lock</i>
+      </button>
+    </div>
   </div>
-
-  <script language="javascript">
-    function handleThrow() {
-      let xhr = new XMLHttpRequest();
-      let faceCount = document.getElementById('faceCount').value;
-
-      if (!faceCount) {
-        document.getElementById('throwResult').innerHTML = "Please enter some number.";
-        return
-      }
-      // For "production" use:
-      xhr.open('GET', `http://35.226.73.0/diceapi/dice/${faceCount}`);
-      // xhr.open('GET', `http://localhost:8080/diceapi/dice/${faceCount}`);
-      xhr.send();
-      xhr.onload = function() {
-        let result = JSON.parse(xhr.response).Eyes;
-        document.getElementById('throwResult').innerHTML = `Throw result: ${result}`;
-      }
-    }
-  </script>
 </body>
 </html>
